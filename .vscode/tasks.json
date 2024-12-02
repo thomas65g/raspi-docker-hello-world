@@ -1,0 +1,44 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "deploy",
+            "isBackground": true,
+            "command": "sh",
+            "args": [
+                "deploy.sh",
+                "${config:target_host}",
+                "${config:target_debug_port}",
+                "${command:cmake.launchTargetPath}",
+                "${config:target_user}"
+            ],
+            "problemMatcher": {
+                "base": "$gcc",
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "Deploying to target",
+                    "endsPattern": "Listening on port [0-9]{4}"
+                }
+            },
+            "dependsOn": [
+                "CMake: build"
+            ]
+        },
+        {
+            "type": "cmake",
+            "label": "CMake: build",
+            "command": "build",
+            "targets": [
+                "hello_world"
+            ],
+            "preset": "${command:cmake.activeBuildPresetName}",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [],
+            "detail": "CMake template build task"
+        }
+    ]
+}

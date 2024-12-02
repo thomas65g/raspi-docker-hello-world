@@ -1,0 +1,38 @@
+{
+    "name": "debian-bookworm",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-vscode.cpptools",
+                "ms-vscode.cmake-tools",
+                "ms-vscode.cpptools-extension-pack",
+                "donjayamanne.githistory",
+                "vadimcn.vscode-lldb",
+                "cheshirekow.cmake-format"
+            ],
+            "settings": {
+                "terminal.integrated.defaultProfile.linux": "bash",
+                "terminal.integrated.profiles.linux": {
+                    "bash": {
+                        "path": "/bin/bash"
+                    }
+                }
+            }
+        }
+    },
+    "mounts": [
+        "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached",
+        "source=/var/run/dbus,target=/var/run/dbus,type=bind,consistency=cached",
+        "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,readonly,type=bind"
+    ],
+    "runArgs": [
+        "--privileged",
+        "--network=host",
+        "--env=DISPLAY=${localEnv:DISPLAY}",
+        "--device=/dev/ttyUSB0"
+    ],
+    "remoteUser": "vscode"
+}

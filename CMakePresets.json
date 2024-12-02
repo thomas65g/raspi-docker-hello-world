@@ -1,0 +1,292 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 24,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "platform_linux",
+      "hidden": true,
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "installDir": "${sourceDir}/out/install/${presetName}",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
+      "name": "buildtype_debug",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "buildtype_release",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "armhf-base",
+      "hidden": true,
+      "generator": "Ninja",
+      "toolchainFile": "/usr/share/devcontainer/toolchain_armhf.cmake",
+      "cacheVariables": {
+        "CMAKE_PREFIX_PATH": "/usr/lib/arm-linux-gnueabihf"
+      }
+    },
+    {
+      "name": "arm64-base",
+      "hidden": true,
+      "generator": "Ninja",
+      "toolchainFile": "/usr/share/devcontainer/toolchain_arm64.cmake"
+    },
+    {
+      "name": "amd64_base",
+      "hidden": true,
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "/usr/bin/gcc",
+        "CMAKE_CXX_COMPILER": "/usr/bin/g++"
+      }
+    },
+    {
+      "name": "host-amd64_base",
+      "hidden": true,
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "/usr/bin/gcc-13",
+        "CMAKE_CXX_COMPILER": "/usr/bin/g++-13"
+      },
+      "environment": {
+        "Qt5_DIR": "/opt/Qt/5.15.2/gcc_64/lib/cmake/Qt5"
+      }
+    },
+    {
+      "name": "arm64/Release",
+      "inherits": [
+        "platform_linux",
+        "buildtype_release",
+        "arm64-base"
+      ]
+    },
+    {
+      "name": "arm64/Debug",
+      "inherits": [
+        "platform_linux",
+        "buildtype_debug",
+        "arm64-base"
+      ]
+    },
+    {
+      "name": "amd64/Release",
+      "inherits": [
+        "platform_linux",
+        "buildtype_release",
+        "amd64_base"
+      ]
+    },
+    {
+      "name": "amd64/Debug",
+      "inherits": [
+        "platform_linux",
+        "buildtype_debug",
+        "amd64_base"
+      ]
+    },
+    {
+      "name": "host-amd64/Release",
+      "inherits": [
+        "platform_linux",
+        "buildtype_release",
+        "host-amd64_base"
+      ]
+    },
+    {
+      "name": "host-amd64/Debug",
+      "inherits": [
+        "platform_linux",
+        "buildtype_debug",
+        "host-amd64_base"
+      ]
+    },
+    {
+      "name": "base",
+      "hidden": true,
+      "environment": {
+        "buildDir": "${sourceDir}/build/${presetName}",
+        "installDir": "${sourceDir}/install/${presetName}"
+      },
+      "binaryDir": "$env{buildDir}",
+      "installDir": "$env{installDir}",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "$env{installDir}"
+      }
+    },
+    {
+      "name": "platform-windows",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "cl",
+        "CMAKE_CXX_COMPILER": "cl"
+      },
+      "toolset": {
+        "value": "v143,host=x64",
+        "strategy": "external"
+      },
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "vcpkg-sdk",
+      "hidden": true,
+      "generator": "Ninja",
+      "toolchainFile": "C:/source/vcpkg/1.0/scripts/buildsystems/vcpkg.cmake",
+      "inherits": "base"
+    },
+    {
+      "name": "vcpkg-base",
+      "hidden": true,
+      "generator": "Ninja",
+      "toolchainFile": "${sourceDir}/dep/vcpkg/scripts/buildsystems/vcpkg.cmake",
+      "cacheVariables": {
+        "VCPKG_INSTALL_OPTIONS": "--no-print-usage;--x-buildtrees-root=$env{vcpkgCacheDir}/buildtrees;--x-packages-root=$env{vcpkgCacheDir}/packages;--x-downloads-root=$env{vcpkgCacheDir}/downloads",
+        "VCPKG_MANIFEST_DIR": "${sourceDir}/vcpkg-config",
+        "VCPKG_OVERLAY_PORTS": "${sourceDir}/vcpkg-config/overlay-ports/common;${sourceDir}/vcpkg-ports",
+        "VCPKG_OVERLAY_TRIPLETS": "${sourceDir}/vcpkg-config/overlay-triplets",
+        "VCPKG_TARGET_TRIPLET": "x64-windows-static-qt-bin"
+      },
+      "environment": {
+        "Qt6_DIR": "C:/Qt/6.6.0/msvc2019_64",
+        "Qt5_DIR": "C:/Qt/5.15.2/msvc2019_64"
+      },
+      "inherits": "base"
+    },
+    {
+      "name": "qt5",
+      "hidden": true,
+      "cacheVariables": {
+        "PDK_DISABLE_QT6": true
+      }
+    },
+    {
+      "name": "qt6",
+      "hidden": true,
+      "cacheVariables": {
+        "PDK_DISABLE_QT6": false
+      }
+    },
+    {
+      "name": "x64-Debug-Windows-qt5",
+      "displayName": "x64-Debug-qt5",
+      "inherits": [
+        "vcpkg-sdk",
+        "buildtype_debug",
+        "platform-windows",
+        "qt5"
+      ]
+    },
+    {
+      "name": "x64-Release-Windows-qt5",
+      "displayName": "x64-Release-qt5",
+      "inherits": [
+        "vcpkg-sdk",
+        "buildtype_release",
+        "platform-windows",
+        "qt5"
+      ]
+    },
+    {
+      "name": "x64-Debug-Windows-qt6",
+      "displayName": "x64-Debug-qt6",
+      "inherits": [
+        "vcpkg-sdk",
+        "buildtype_debug",
+        "platform-windows",
+        "qt6"
+      ]
+    },
+    {
+      "name": "x64-Release-Windows-qt6",
+      "displayName": "x64-Release-qt6",
+      "inherits": [
+        "vcpkg-sdk",
+        "buildtype_release",
+        "platform-windows",
+        "qt6"
+      ]
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "arm64/Debug",
+      "configurePreset": "arm64/Debug"
+    },
+    {
+      "name": "arm64/Release",
+      "configurePreset": "arm64/Release"
+    },
+    {
+      "name": "amd64/Release",
+      "configurePreset": "amd64/Release"
+    },
+    {
+      "name": "amd64/Debug",
+      "configurePreset": "amd64/Debug"
+    },
+    {
+      "name": "host-amd64/Release",
+      "configurePreset": "host-amd64/Release"
+    },
+    {
+      "name": "host-amd64/Debug",
+      "configurePreset": "host-amd64/Debug"
+    },
+    {
+      "name": "build-windows",
+      "hidden": true,
+      "verbose": true,
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "x64-Debug-Windows-qt5",
+      "displayName": "x64-Debug-Windows-qt5",
+      "configurePreset": "x64-Debug-Windows-qt5",
+      "inherits": "build-windows"
+    },
+    {
+      "name": "x64-Release-Windows-qt5",
+      "displayName": "x64-Release-Windows-qt5",
+      "configurePreset": "x64-Release-Windows-qt5",
+      "inherits": "build-windows"
+    },
+    {
+      "name": "x64-Debug-Windows-qt6",
+      "displayName": "x64-Debug-Windows-qt6",
+      "configurePreset": "x64-Debug-Windows-qt6",
+      "inherits": "build-windows"
+    },
+    {
+      "name": "x64-Release-Windows-qt6",
+      "displayName": "x64-Release-Windows-qt6",
+      "configurePreset": "x64-Release-Windows-qt6",
+      "inherits": "build-windows"
+    }
+  ]
+}
